@@ -2,10 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import styles from './admin.module.css';
 import { supabase } from '../../../utils/supabase';
+import { isSessionValid, touchSession, endSession } from '../../../utils/adminSession';
 
 export default function AdminDashboard() {
+  const router = useRouter();
+  const [authChecked, setAuthChecked] = useState(false);
   const [section, setSection] = useState('applications');
   const [selectedIds, setSelectedIds] = useState([]);
   const [selectedProfile, setSelectedProfile] = useState(null);
@@ -13,8 +17,43 @@ export default function AdminDashboard() {
   const [registrations, setRegistrations] = useState([]);
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (!isSessionValid()) {
+      endSession();
+      router.replace('/login');
+      return;
+    }
+    touchSession();
+    setAuthChecked(true);
+
+    const activityEvents = ['mousemove', 'mousedown', 'keydown', 'scroll', 'touchstart'];
+    const onActivity = () => touchSession();
+    activityEvents.forEach((e) => window.addEventListener(e, onActivity, { passive: true }));
+
+    const checkInterval = setInterval(() => {
+      if (!isSessionValid()) {
+        endSession();
+        router.replace('/login');
+      }
+    }, 60 * 1000);
+
+    const onVisibility = () => {
+      if (document.visibilityState === 'visible' && !isSessionValid()) {
+        endSession();
+        router.replace('/login');
+      }
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+
+    return () => {
+      activityEvents.forEach((e) => window.removeEventListener(e, onActivity));
+      document.removeEventListener('visibilitychange', onVisibility);
+      clearInterval(checkInterval);
+    };
+  }, [router]);
+
+  useEffect(() => {
+    if (authChecked) fetchData();
+  }, [authChecked]);
 
   const fetchData = async () => {
     const { data: apps } = await supabase.from('applications').select('*').order('created_at', { ascending: false });
@@ -117,6 +156,8 @@ export default function AdminDashboard() {
     }
   };
 
+  if (!authChecked) return null;
+
   return (
     <div className={styles.container}>
       {/* SIDEBAR */}
@@ -125,6 +166,7 @@ export default function AdminDashboard() {
 
           <a className={section === 'applications' && !selectedProfile ? styles.active : ''} onClick={() => { setSection('applications'); setSelectedProfile(null); setSelectedIds([]); }}>Applications</a>
           <a className={section === 'registrations' && !selectedProfile ? styles.active : ''} onClick={() => { setSection('registrations'); setSelectedProfile(null); setSelectedIds([]); }}>Registrations</a>
+          <a style={{ marginTop: 'auto', cursor: 'pointer' }} onClick={() => { endSession(); router.replace('/login'); }}>Logout</a>
       </div>
 
       {/* MAIN */}

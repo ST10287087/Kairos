@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './login.module.css';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'; // we will write our own or use this, for now just ui
+import { startSession } from '../../../utils/adminSession';
 
 export default function Login() {
   const router = useRouter();
@@ -12,11 +12,10 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
-    // Basic mock login until Supabase is hooked up properly
     if (email && password) {
       setLoading(true);
-      // Simulate API call
       setTimeout(() => {
+        startSession();
         router.push('/admin');
       }, 1000);
     } else {
