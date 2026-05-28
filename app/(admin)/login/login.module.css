@@ -1,58 +1,189 @@
 .container {
-    background: linear-gradient(to bottom, #6D0101, #1268A3);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    width: 100vw;
-    font-family: 'Alice', serif;
     position: fixed;
     top: 0;
     left: 0;
+    height: 100vh;
+    width: 100vw;
+    background: linear-gradient(135deg, #1f6796 0%, #1268A3 50%, #6D0101 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Inter', sans-serif;
+    overflow: hidden;
+}
+
+/* Soft floating shapes for depth, matching the hero vibe */
+.container::before,
+.container::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.35;
+    pointer-events: none;
+}
+
+.container::before {
+    width: 420px;
+    height: 420px;
+    background: #ffcccc;
+    top: -120px;
+    left: -120px;
+    animation: gentleFloat 8s ease-in-out infinite;
+}
+
+.container::after {
+    width: 380px;
+    height: 380px;
+    background: #1268A3;
+    bottom: -140px;
+    right: -100px;
+    animation: gentleFloat 10s ease-in-out infinite reverse;
 }
 
 .card {
-    background: rgba(255, 255, 255, 0.25);
-    padding: 40px;
-    border-radius: 20px;
-    width: 350px;
+    position: relative;
+    z-index: 1;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    padding: 50px 40px;
+    border-radius: 30px;
+    width: 100%;
+    max-width: 400px;
     text-align: center;
-    animation: slideIn 0.7s ease;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.2);
+    animation: slideIn 0.7s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-sizing: border-box;
+}
+
+.card img {
+    height: 90px;
+    margin-bottom: 20px;
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.1));
 }
 
 @keyframes slideIn {
-    from { opacity: 0; transform: translateY(50px); }
+    from { opacity: 0; transform: translateY(40px); }
     to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes gentleFloat {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(20px, -25px); }
 }
 
 .card h1 {
     font-family: 'Alfa Slab One', cursive;
-    font-weight: 300;
+    font-weight: 400;
+    font-size: 32px;
+    margin: 0 0 8px;
+    letter-spacing: 1px;
+}
+
+.card .subtitle {
+    font-family: 'Alice', sans-serif;
+    color: #555;
+    font-size: 15px;
+    margin-bottom: 30px;
 }
 
 .red { color: #6D0101; }
 .blue { color: #1268A3; }
 
+.field {
+    position: relative;
+    margin-bottom: 16px;
+    text-align: left;
+}
+
+.field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #6D0101;
+    margin-bottom: 6px;
+    font-family: 'Montserrat', sans-serif;
+}
+
 .card input {
     width: 100%;
-    padding: 12px;
-    margin: 10px 0;
-    border-radius: 8px;
-    border: 1px solid #ccc;
+    padding: 14px 16px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
     box-sizing: border-box;
+    transition: all 0.3s ease;
+}
+
+.card input:focus {
+    outline: none;
+    border-color: #1268A3;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(18, 104, 163, 0.15);
 }
 
 .card button {
     width: 100%;
-    padding: 12px;
+    padding: 14px;
     border: none;
-    border-radius: 8px;
-    background: linear-gradient(to right, #6D0101, #1268A3);
+    border-radius: 12px;
+    background: linear-gradient(135deg, #1f6796 0%, #1268A3 100%);
     color: white;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    font-family: 'Montserrat', sans-serif;
+    margin-top: 10px;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 6px 20px rgba(18, 104, 163, 0.35);
+}
+
+.card button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(18, 104, 163, 0.45);
+}
+
+.card button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.backLink {
+    display: inline-block;
+    margin-top: 22px;
+    font-size: 13px;
+    color: #1268A3;
+    text-decoration: none;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    transition: color 0.2s ease;
+}
+
+.backLink:hover {
+    color: #6D0101;
 }
 
 .hidden {
     display: none;
+}
+
+@media (max-width: 480px) {
+    .card {
+        padding: 40px 24px;
+        margin: 20px;
+        border-radius: 24px;
+    }
+
+    .card h1 {
+        font-size: 26px;
+    }
 }
