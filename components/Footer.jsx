@@ -8,7 +8,8 @@ export default function Footer() {
         <p>INSTAGRAM: @kairoslanguageinstitute7</p>
       </div>
       <div className="copyright">
-        © 2026 Kairos Language Institute | Developed & Designed by OrcaHalo Studios
+        © 2026 Kairos Language Institute | Developed & Designed by Deshalin
+        Naicker and Kyle Pillay
       </div>
     </footer>
   );
